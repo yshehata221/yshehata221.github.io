@@ -5,7 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Youssef Shehata — Computer Science (Cyber Security) Graduate</title>
 <meta name="description" content="Portfolio of Youssef Shehata, BSc (Hons) Computer Science (Cyber Security) graduate from Heriot-Watt University. Dissertation on detecting AI-generated phishing with LLMs and a Bidirectional LSTM classifier.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="canonical" href="https://yshehata221.github.io/">
+<meta name="theme-color" content="#0d7490">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d7490'/%3E%3Ctext x='50' y='67' font-size='48' font-family='monospace' font-weight='bold' fill='white' text-anchor='middle'%3EYS%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yshehata221.github.io/">
+<meta property="og:title" content="Youssef Shehata — Computer Science (Cyber Security) Graduate">
+<meta property="og:description" content="I taught a neural network to spot AI-written phishing. Heriot-Watt CS (Cyber Security) graduate looking for graduate roles in computing.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Youssef Shehata — Computer Science (Cyber Security) Graduate">
+<meta name="twitter:description" content="I taught a neural network to spot AI-written phishing. Heriot-Watt CS (Cyber Security) graduate looking for graduate roles in computing.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Youssef Shehata",
+  "url": "https://yshehata221.github.io/",
+  "email": "mailto:yshehata221@gmail.com",
+  "jobTitle": "Computer Science (Cyber Security) Graduate",
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "Heriot-Watt University" },
+  "sameAs": [
+    "https://github.com/yshehata221",
+    "https://www.linkedin.com/in/youssef-shehata22/"
+  ]
+}
+</script><link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -39,7 +63,7 @@
   }
   .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
-  /* --------- header --------- */
+  /* ---------- header ---------- */
   header {
     position: sticky; top: 0; z-index: 20;
     background: rgba(245,247,249,0.92);
@@ -127,7 +151,7 @@
   .stat .n { font-family: var(--display); font-weight: 800; font-size: 1.5rem; letter-spacing: -0.01em; }
   .stat .l { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
   @media (max-width: 640px) { .diss-stats { grid-template-columns: 1fr; } }
-  .diss-links { margin-top: 24px; }
+  .diss-links { margin-top: 24px; display: flex; gap: 14px; flex-wrap: wrap; }
 
   /* ---------- email demo ---------- */
   .demo { margin-top: 30px; }
@@ -213,8 +237,7 @@
         University in Edinburgh. For my dissertation I used five LLMs to write phishing
         emails, then trained a neural network to catch them. The spelling mistakes that used
         to give phishing away are gone now, so detection has to get smarter. I'm after
-        graduate roles in cyber security, software engineering or IT infrastructure, anywhere
-        in the UK.
+        graduate roles within the computer science / IT field.
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#dissertation">See the research</a>
@@ -236,9 +259,11 @@
           Phishing used to be easy to spot. Bad grammar, odd phrasing, the usual tells.
           LLMs fixed all of that for the attackers. I wanted to know whether a classifier
           could still separate machine-written phishing from legitimate mail, so I generated
-          synthetic phishing with GPT, Claude, Gemini, Grok and DeepSeek, mixed it into a
-          dataset of real emails, and trained a Bidirectional LSTM to sort malicious from
-          safe.
+          synthetic phishing with GPT, Claude, Gemini, Grok and DeepSeek across multiple
+          prompt styles, mixed it into a dataset of real emails, and trained a Bidirectional
+          LSTM to sort malicious from safe. The project covers both sides of the problem:
+          how attackers can abuse LLMs, and which detection and mitigation approaches hold
+          up against machine-written phishing compared with the human-written kind.
         </p>
         <div class="diss-stats">
           <div class="stat"><div class="n">30,878</div><div class="l">emails in the dataset</div></div>
@@ -246,6 +271,7 @@
           <div class="stat"><div class="n">BiLSTM</div><div class="l">deep learning classifier</div></div>
         </div>
         <div class="diss-links">
+          <a class="btn btn-primary" href="phish-game.html">Play Spot the Phish →</a>
           <a class="btn btn-ghost" href="https://github.com/yshehata221/AIGenPhishingAndMitigation" target="_blank" rel="noopener">View code on GitHub →</a>
         </div>
       </div>
@@ -285,6 +311,33 @@
 
         <p class="demo-note">These two examples are illustrative. The real classifier learned patterns like these from tens of thousands of emails, not two.</p>
       </div>
+
+      <!-- other work -->
+      <div class="skill-groups" style="margin-top:34px;">
+        <div class="skill-group">
+          <h3>Also built · offensive &amp; defensive lab work</h3>
+          <p style="color:var(--ink-soft); font-size:15px; margin-bottom:12px;">Hands-on
+          coursework in Advanced Network Security at Heriot-Watt: DNS cache poisoning
+          attacks built with Scapy (SEED Labs), plus practical work on DNSSEC, WPA2/WPA3
+          and 802.1X authentication.</p>
+          <div class="tags">
+            <span class="tag">Scapy</span>
+            <span class="tag">SEED Labs</span>
+            <span class="tag">DNS / DNSSEC</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Also built · this website</h3>
+          <p style="color:var(--ink-soft); font-size:15px; margin-bottom:12px;">Designed
+          and hand-coded from scratch: one HTML file, no frameworks, no template, deployed
+          on GitHub Pages. View source if you like — it's all there.</p>
+          <div class="tags">
+            <span class="tag">HTML / CSS</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">GitHub Pages</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -299,6 +352,7 @@
           <div class="tags">
             <span class="tag core">Python</span>
             <span class="tag core">Java</span>
+            <span class="tag">C++</span>
             <span class="tag core">SQL</span>
             <span class="tag">JavaScript</span>
             <span class="tag">OCaml</span>
@@ -307,15 +361,27 @@
           </div>
         </div>
         <div class="skill-group">
-          <h3>Security &amp; systems</h3>
+          <h3>Security &amp; networking</h3>
           <div class="tags">
             <span class="tag core">Machine learning for phishing detection</span>
-            <span class="tag">Network security fundamentals</span>
+            <span class="tag core">Scapy</span>
+            <span class="tag">DNS / DNSSEC</span>
+            <span class="tag">Wireless security (WPA2/WPA3, 802.1X)</span>
+            <span class="tag">Digital forensics fundamentals</span>
             <span class="tag">Docker (working exposure)</span>
           </div>
         </div>
         <div class="skill-group">
-          <h3>Languages</h3>
+          <h3>Tools</h3>
+          <div class="tags">
+            <span class="tag core">Git (GitHub / GitLab)</span>
+            <span class="tag core">Linux</span>
+            <span class="tag">VS Code</span>
+            <span class="tag">Eclipse</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Spoken languages</h3>
           <div class="tags">
             <span class="tag core">English — fluent</span>
             <span class="tag">Arabic — conversational</span>
@@ -333,32 +399,43 @@
       <h2>Education &amp; experience</h2>
       <div class="timeline">
         <div class="t-item">
-          <div class="t-when">2022 — 2026</div>
+          <div class="t-when">2020 — 2026</div>
           <div class="t-what">
             <h3>BSc (Hons) Computer Science — Cyber Security, 2:1</h3>
             <div class="where">Heriot-Watt University · Dubai → Edinburgh</div>
-            <p>Started in Dubai, finished in Edinburgh. Two campuses, one degree. Final year
-            went deep on advanced network security and the machine learning behind my
-            dissertation.</p>
+            <p>Started in Dubai with an engineering foundation year, finished in Edinburgh.
+            Two campuses, one degree. Final year went deep on advanced network security and
+            the machine learning behind my dissertation; other modules included Digital
+            Forensics, Operating Systems, Data Structures &amp; Algorithms and AI.</p>
           </div>
         </div>
         <div class="t-item">
           <div class="t-when">2025 — 2026</div>
           <div class="t-what">
-            <h3>L1 Engineer / Customer Sales Advisor</h3>
-            <div class="where">Samsung Experience Store</div>
+            <h3>L1 Engineer / Customer Service Advisor</h3>
+            <div class="where">Samsung Experience Store · Edinburgh</div>
             <p>First line technical support and sales on the shop floor. Diagnosed device
-            faults, handled repair triage and explained fixes to customers who just wanted
-            their phone back. Retail teaches you to think fast with someone watching.</p>
+            faults, ran inspections and repair triage, and escalated to Level 2 with full
+            assessment notes when needed. One of the top performers in store against sales
+            targets and quality KPIs.</p>
           </div>
         </div>
         <div class="t-item">
-          <div class="t-when">Gap year</div>
+          <div class="t-when">2024 — 2026</div>
           <div class="t-what">
-            <h3>Bar Lounge Supervisor</h3>
-            <div class="where">Tokyo, Japan</div>
-            <p>Ran shifts at a bar lounge in Tokyo during my gap year. Rotas, escalations,
-            and busy nights where the staff and the customers didn't share a language. My
+            <h3>Communications Manager</h3>
+            <div class="where">Heriot-Watt Computer Science Society</div>
+            <p>Ran the society's Discord, answering technical and academic questions from
+            students, and coordinated industry speaker events.</p>
+          </div>
+        </div>
+        <div class="t-item">
+          <div class="t-when">2022 — 2023</div>
+          <div class="t-what">
+            <h3>Supervisor (promoted from Waiter)</h3>
+            <div class="where">R2 Supperclub · Tokyo, Japan</div>
+            <p>Started as a waiter and got promoted to supervisor. Rotas, escalations,
+            training new staff, and busy nights running shifts in two languages. My
             Japanese was basic, so I got good at communicating anyway.</p>
           </div>
         </div>
@@ -372,14 +449,16 @@
       <div class="verdict"><span class="dot"></span>status: <b>open to opportunities</b> · UK-wide, full availability</div>
       <h2>Get in touch</h2>
       <p style="color:var(--ink-soft); max-width:60ch;">
-        I'm based in Edinburgh and will relocate anywhere in the UK for the right role.
-        British citizen, happy to undergo security vetting.
+        I'm currently based in Edinburgh. British citizen, happy to undergo security vetting.
       </p>
       <div class="contact-row">
-        <a class="btn btn-primary" href="mailto:yshehata221@gmail.com">yshehata221@gmail.com</a>
+        <a class="btn btn-primary" href="mailto:yshehata221@gmail.com?subject=CV%20request">yshehata221@gmail.com</a>
         <a class="btn btn-ghost" href="https://www.linkedin.com/in/youssef-shehata22/" target="_blank" rel="noopener">LinkedIn</a>
         <a class="btn btn-ghost" href="https://github.com/yshehata221" target="_blank" rel="noopener">GitHub</a>
       </div>
+      <p style="color:var(--ink-soft); font-size:14.5px; margin-top:16px;">
+        Full CV available on request — one email and it's yours.
+      </p>
     </div>
   </section>
 
@@ -402,5 +481,4 @@
 </script>
 
 </body>
-  
 </html>
