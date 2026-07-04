@@ -151,9 +151,9 @@
   <div class="game-head">
     <div class="verdict"><span class="dot"></span>interactive · based on my dissertation research</div>
     <h1>Spot the <em>phish.</em></h1>
-    <p>Ten emails. Some are phishing, some are real. Modern phishing is written by AI, so
-    forget hunting for spelling mistakes — you'll need to read like a classifier. Cues are
-    revealed after each guess.</p>
+    <p>Ten emails. Some are phishing, some are real. AI writes the phishing now, so the
+    spelling mistakes are gone and you'll have to read the way a classifier does. Guess,
+    and I'll show you what gave each one away.</p>
   </div>
 
   <!-- game -->
@@ -215,19 +215,19 @@
       verdict: 'phish',
       meta: 'from: NorthBank Security &lt;alerts@<mark class="cue">northbank-securecheck.com</mark>&gt;<br>subject: Unusual transaction on your account',
       body: '<p>Dear Customer,</p><p>We detected a payment of £749.99 that requires your confirmation. If you do not recognise this transaction, <mark class="cue">verify your identity within 24 hours</mark> to avoid <mark class="cue">a temporary hold on your account</mark>.</p><p>NorthBank Fraud Team</p>',
-      explain: 'The real bank would write from its own domain, not a lookalike like "northbank-securecheck.com". Add the deadline pressure and the account-hold threat and this is textbook credential phishing. Note: flawless spelling — AI-written phishing doesn\u2019t make typos.'
+      explain: 'The real bank would write from its own domain, not a lookalike like "northbank-securecheck.com". Add the deadline pressure and the account-hold threat and this is textbook credential phishing. And notice the flawless spelling. AI-written phishing doesn\u2019t make typos.'
     },
     {
       verdict: 'phish',
       meta: 'from: ParcelPoint &lt;notify@<mark class="cue">parcelpoint-redelivery.info</mark>&gt;<br>subject: Your parcel could not be delivered',
       body: '<p>Hello,</p><p>We attempted delivery today but no one was available. To rearrange, please pay a <mark class="cue">redelivery fee of £1.45</mark> using the link below. Unclaimed parcels are <mark class="cue">returned to sender after 48 hours</mark>.</p><p>ParcelPoint Deliveries</p>',
-      explain: 'Couriers don\u2019t charge tiny "redelivery fees" by emailed link — the small amount is the trick, it\u2019s really after your card details. The ".info" lookalike domain and the 48-hour countdown seal it.'
+      explain: 'Couriers don\u2019t charge tiny "redelivery fees" by emailed link. The small amount is the trick; it\u2019s really after your card details. The ".info" lookalike domain and the 48-hour countdown seal it.'
     },
     {
       verdict: 'phish',
       meta: 'from: Payroll &lt;hr-updates@company-payroll.net&gt;<br><mark class="cue">reply-to: payrollteam2026@gmail.com</mark><br>subject: Action needed: confirm your bank details',
       body: '<p>Dear Employee,</p><p>As part of our payroll system migration, all staff must <mark class="cue">re-confirm their bank account details</mark> before the 28th to avoid <mark class="cue">a delay to this month\u2019s salary</mark>.</p><p>HR Payroll Team</p>',
-      explain: 'The reply-to is a personal Gmail address — a mismatch the sender hoped you wouldn\u2019t check. Real payroll never collects bank details by email reply, and threatening your salary is pure urgency pressure.'
+      explain: 'The reply-to is a personal Gmail address, a mismatch the sender hoped you wouldn\u2019t check. Real payroll never collects bank details by email reply, and threatening your salary is pure urgency pressure.'
     },
     {
       verdict: 'phish',
@@ -239,13 +239,13 @@
       verdict: 'phish',
       meta: 'from: <mark class="cue">Sarah Mitchell (CEO) &lt;s.mitchell.exec@outlook.com&gt;</mark><br>subject: Quick favour',
       body: '<p>Hi,</p><p>Are you at your desk? I\u2019m heading into back-to-back meetings and need something handled <mark class="cue">discreetly and urgently</mark>. Can you purchase <mark class="cue">four £50 gift cards</mark> for a client and send me the codes? I\u2019ll approve the expense later.</p><p>Sent from my iPhone</p>',
-      explain: 'Business email compromise: the display name says CEO but the address is a free Outlook account. Gift cards, secrecy, urgency, and "I\u2019ll approve it later" — every flag at once, and not a spelling mistake in sight.'
+      explain: 'Business email compromise: the display name says CEO but the address is a free Outlook account. Gift cards, secrecy, urgency, and "I\u2019ll approve it later". Every flag at once, and not a spelling mistake in sight.'
     },
     {
       verdict: 'phish',
       meta: 'from: Talent Team &lt;careers@<mark class="cue">brightpath-recruitment.co</mark>&gt;<br>subject: Interview invitation — Graduate Security Analyst',
       body: '<p>Dear Youssef,</p><p>Your profile is an excellent match for a Graduate Security Analyst position paying £42,000. To proceed, please <mark class="cue">complete the attached candidate form</mark>, including your <mark class="cue">date of birth and National Insurance number</mark> for our vetting checks.</p><p>Warm regards,<br>BrightPath Talent Team</p>',
-      explain: 'Recruitment phishing aimed at job seekers — personalised, fluent and flattering, which is exactly what LLMs are good at. No legitimate recruiter needs your NI number or date of birth before you\u2019ve even interviewed.'
+      explain: 'Recruitment phishing aimed at job seekers. Personalised and flattering, which is what LLMs are good at. No legitimate recruiter needs your NI number or date of birth before you\u2019ve even interviewed.'
     },
     {
       verdict: 'legit',
@@ -257,13 +257,13 @@
       verdict: 'legit',
       meta: 'from: Accounts &lt;no-reply@streamly.com&gt;<br>subject: Your password was changed',
       body: '<p>Hi Youssef,</p><p>Your Streamly password was successfully changed on 3 July at 18:42.</p><p>If this was you, no further action is needed. If you didn\u2019t make this change, visit streamly.com directly and use "Forgot password" to secure your account.</p><p>Streamly Accounts</p>',
-      explain: 'Genuine security notification: it doesn\u2019t ask you to click a link to "verify" anything — it tells you to go to the site directly yourself. That advice pattern is the opposite of phishing.'
+      explain: 'Genuine security notification: it doesn\u2019t ask you to click a link to "verify" anything. It tells you to go to the site directly yourself. That advice pattern is the opposite of phishing.'
     },
     {
       verdict: 'legit',
       meta: 'from: Library Services &lt;library@university.ac.uk&gt;<br>subject: Your requested book is ready for collection',
       body: '<p>Hi Youssef,</p><p>The title you reserved is now available at the collection desk. It will be held for you for the next seven days. No action is needed if you no longer require it.</p><p>Library Services</p>',
-      explain: 'Genuine: institutional domain, refers to something you actually did (reserving a book), asks for nothing, and the only "deadline" is a courtesy note about the hold period — no threat attached.'
+      explain: 'Genuine: institutional domain, refers to something you actually did (reserving a book), asks for nothing, and the only "deadline" is a courtesy note about the hold period, with no threat attached.'
     },
     {
       verdict: 'legit',
@@ -275,13 +275,13 @@
       verdict: 'legit',
       meta: 'from: ParcelPoint &lt;tracking@parcelpoint.co.uk&gt;<br>subject: Your parcel arrives tomorrow',
       body: '<p>Hi Youssef,</p><p>Your parcel from Order #58291 is out for delivery tomorrow between 10:00 and 14:00. You can track it any time by entering your tracking number PP-58291-UK on our website.</p><p>No signature is required.</p><p>ParcelPoint</p>',
-      explain: 'Genuine: real domain, no payment request, and instead of a link it gives you a tracking number to enter on the site yourself — it references a specific order rather than a vague "a parcel".'
+      explain: 'Genuine: real domain, no payment request, and instead of a link it gives you a tracking number to enter on the site yourself. And it references a specific order, not a vague "a parcel".'
     },
     {
       verdict: 'legit',
       meta: 'from: Streamly &lt;billing@streamly.com&gt;<br>subject: Your payment receipt — July',
       body: '<p>Hi Youssef,</p><p>Thanks for your payment of £8.99 for your Streamly subscription. This is a receipt for your records — no action is needed.</p><p>You can manage your subscription any time from your account settings.</p><p>Streamly Billing</p>',
-      explain: 'Genuine receipt: correct domain, matches a subscription you\u2019d recognise, and asks nothing. Fake "receipts" exist, but they always add a hook — "dispute this charge", "verify your card". This has no hook.'
+      explain: 'Genuine receipt: correct domain, matches a subscription you\u2019d recognise, and asks nothing. Fake "receipts" exist, but they always add a hook: "dispute this charge", "verify your card". This has no hook.'
     }
   ];
 
@@ -348,11 +348,11 @@
   }
 
   function rankFor(s) {
-    if (s === 10) return ['Human firewall', 'Perfect score. Not a single email got past you — the classifier would be proud.'];
+    if (s === 10) return ['Human firewall', 'Perfect score. Nothing got past you. The classifier would be proud.'];
     if (s >= 8)  return ['Analyst material', 'Sharp eye. You read sender domains and pressure tactics the way a SOC analyst does.'];
-    if (s >= 6)  return ['Cautiously clicking', 'Better than most. The ones that got you were probably the polite, well-written ones — that\u2019s exactly why AI-generated phishing works.'];
-    if (s >= 4)  return ['Phish food', 'The attackers would like a word. Check the sender\u2019s domain before anything else — it\u2019s the hardest thing for them to fake.'];
-    return ['Change your passwords', 'Rough round. The good news: the cues are learnable, and now you\u2019ve seen ten of them explained.'];
+    if (s >= 6)  return ['Cautiously clicking', 'Better than most. I\u2019d bet the ones that got you were the polite, well-written ones. That\u2019s the whole problem with AI phishing.'];
+    if (s >= 4)  return ['Phish food', 'The attackers would like a word. Start with the sender\u2019s domain next time. It\u2019s the one thing they can\u2019t fake properly.'];
+    return ['Change your passwords', 'Rough round. Then again, you just had ten scams explained to you in detail, which is more training than most people ever get.'];
   }
 
   function endGame() {
