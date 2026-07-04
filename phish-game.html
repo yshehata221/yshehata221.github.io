@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spot the Phish — a game by Youssef Shehata</title>
+<meta name="description" content="Can you tell phishing from legitimate email? Ten rounds, based on the signal patterns from my dissertation on AI-generated phishing.">
+<link rel="canonical" href="https://yshehata221.github.io/phish-game.html">
+<meta name="theme-color" content="#0d7490">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d7490'/%3E%3Ctext x='50' y='67' font-size='48' font-family='monospace' font-weight='bold' fill='white' text-anchor='middle'%3EYS%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yshehata221.github.io/phish-game.html">
+<meta property="og:title" content="Spot the Phish — can you beat the classifier?">
+<meta property="og:description" content="Ten emails. Some are phishing, some are real. How good is your eye? A game based on my dissertation on AI-generated phishing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f5f7f9;
+    --card: #ffffff;
+    --ink: #131c26;
+    --ink-soft: #47535f;
+    --line: #dbe2e8;
+    --safe: #0d7490;
+    --safe-soft: #e3f2f6;
+    --flag: #c05f0e;
+    --flag-soft: #faeedd;
+    --mono: "IBM Plex Mono", ui-monospace, monospace;
+    --sans: "IBM Plex Sans", system-ui, sans-serif;
+    --display: "Archivo", system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: var(--sans); font-size: 17px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--safe); outline-offset: 3px; border-radius: 2px; }
+
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(245,247,249,0.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+  .nav-name { font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: none; }
+  .nav-name span { color: var(--safe); }
+  .nav-back { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); text-decoration: none; }
+  .nav-back:hover { color: var(--safe); }
+
+  .verdict {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.02em;
+    color: var(--ink-soft); border: 1px solid var(--line); border-radius: 999px;
+    background: var(--card); padding: 5px 14px 5px 10px; margin-bottom: 16px;
+  }
+  .verdict .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--safe); flex-shrink: 0; }
+  .verdict b { color: var(--safe); font-weight: 500; }
+
+  .game-head { padding: 56px 0 8px; }
+  h1 {
+    font-family: var(--display); font-weight: 800;
+    font-size: clamp(2rem, 5.5vw, 3.1rem); line-height: 1.05; letter-spacing: -0.02em;
+  }
+  h1 em { font-style: normal; color: var(--safe); }
+  .game-head p { margin-top: 14px; color: var(--ink-soft); max-width: 56ch; }
+
+  .hud {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 13px; color: var(--ink-soft);
+    margin: 30px 0 12px;
+  }
+  .hud b { color: var(--ink); font-weight: 500; }
+  .progress { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin-bottom: 22px; }
+  .progress-fill { height: 100%; width: 0%; background: var(--safe); transition: width 0.3s ease; }
+
+  .email-pane {
+    border: 1px solid var(--line); border-radius: 10px; background: var(--card);
+    padding: 22px 24px; font-size: 15.5px;
+  }
+  .email-pane .meta {
+    font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); line-height: 1.9;
+    border-bottom: 1px dashed var(--line); padding-bottom: 12px; margin-bottom: 14px;
+    overflow-wrap: anywhere;
+  }
+  .email-pane .body p { margin-bottom: 10px; }
+  /* cues hidden until reveal */
+  mark.cue { background: transparent; color: inherit; border-bottom: none; padding: 0 2px; border-radius: 2px; }
+  .revealed mark.cue { background: var(--flag-soft); color: var(--flag); border-bottom: 1.5px solid var(--flag); }
+
+  .choices { display: flex; gap: 14px; margin-top: 20px; }
+  .choice {
+    flex: 1; cursor: pointer; font-family: var(--mono); font-size: 15px; font-weight: 500;
+    padding: 14px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); color: var(--ink);
+  }
+  .choice:hover { border-color: var(--ink); }
+  .choice.phish:hover { border-color: var(--flag); color: var(--flag); }
+  .choice.legit:hover { border-color: var(--safe); color: var(--safe); }
+  .choice:disabled { cursor: default; opacity: 0.45; }
+
+  .result { margin-top: 20px; display: none; }
+  .result.show { display: block; }
+  .result-line {
+    font-family: var(--mono); font-size: 14px; display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .result-line .dot { width: 9px; height: 9px; border-radius: 50%; }
+  .result-explain { color: var(--ink-soft); font-size: 15px; max-width: 60ch; }
+  .btn {
+    font-family: var(--mono); font-size: 14px; text-decoration: none; cursor: pointer;
+    padding: 11px 20px; border-radius: 6px; display: inline-block; border: none;
+  }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: var(--safe); }
+  .btn-ghost { border: 1px solid var(--line); color: var(--ink); background: var(--card); }
+  .btn-ghost:hover { border-color: var(--safe); color: var(--safe); }
+  .result .btn { margin-top: 16px; }
+
+  /* end screen */
+  .endscreen { display: none; text-align: left; padding: 10px 0 30px; }
+  .endscreen.show { display: block; }
+  .score-big {
+    font-family: var(--display); font-weight: 900; letter-spacing: -0.02em;
+    font-size: clamp(3rem, 10vw, 5rem); line-height: 1;
+  }
+  .score-rank { font-family: var(--mono); font-size: 15px; color: var(--safe); margin-top: 8px; }
+  .endscreen p.summary { color: var(--ink-soft); margin-top: 16px; max-width: 56ch; }
+  .end-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 24px; }
+
+  footer { padding: 34px 0 44px; border-top: 1px solid var(--line); margin-top: 56px; }
+  footer p { font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); max-width: 70ch; }
+  footer a { color: var(--safe); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="nav-name" href="index.html">Youssef <span>Shehata</span></a>
+    <a class="nav-back" href="index.html#dissertation">← back to portfolio</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="game-head">
+    <div class="verdict"><span class="dot"></span>interactive · based on my dissertation research</div>
+    <h1>Spot the <em>phish.</em></h1>
+    <p>Ten emails. Some are phishing, some are real. AI writes the phishing now, so the
+    spelling mistakes are gone and you'll have to read the way a classifier does. Guess,
+    and I'll show you what gave each one away.</p>
+  </div>
+
+  <!-- game -->
+  <div id="game">
+    <div class="hud">
+      <span>round <b id="round-num">1</b> / 10</span>
+      <span>score <b id="score-num">0</b></span>
+    </div>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="email-pane" id="email-pane">
+      <div class="meta" id="email-meta"></div>
+      <div class="body" id="email-body"></div>
+    </div>
+
+    <div class="choices">
+      <button class="choice phish" id="choose-phish" onclick="guess('phish')">🎣 Phishing</button>
+      <button class="choice legit" id="choose-legit" onclick="guess('legit')">✓ Legitimate</button>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-line" id="result-line"></div>
+      <p class="result-explain" id="result-explain"></p>
+      <button class="btn btn-primary" id="next-btn" onclick="nextRound()">Next email →</button>
+    </div>
+  </div>
+
+  <!-- end screen -->
+  <div class="endscreen" id="endscreen">
+    <div class="verdict"><span class="dot"></span>final classification report</div>
+    <div class="score-big"><span id="final-score">0</span>/10</div>
+    <div class="score-rank" id="final-rank"></div>
+    <p class="summary" id="final-summary"></p>
+    <div class="end-actions">
+      <button class="btn btn-primary" onclick="restart()">Play again</button>
+      <button class="btn btn-ghost" id="share-btn" onclick="shareScore()">Copy score to share</button>
+      <a class="btn btn-ghost" href="index.html#dissertation">See the research behind this</a>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>The emails in this game are synthetic examples written for training purposes — no real
+    brands, senders or links. They're modelled on the signal patterns studied in my
+    dissertation on AI-generated phishing, where a Bidirectional LSTM classifier was trained
+    on ~30,000 real and LLM-generated emails.
+    <a href="https://github.com/yshehata221/AIGenPhishingAndMitigation" target="_blank" rel="noopener">Code on GitHub</a>.</p>
+  </div>
+</footer>
+
+<script>
+  // ---- email pool ----------------------------------------------------------
+  // verdict: 'phish' | 'legit'
+  // body: cues wrapped in <mark class="cue"> — invisible until reveal
+  const EMAILS = [
+    {
+      verdict: 'phish',
+      meta: 'from: NorthBank Security &lt;alerts@<mark class="cue">northbank-securecheck.com</mark>&gt;<br>subject: Unusual transaction on your account',
+      body: '<p>Dear Customer,</p><p>We detected a payment of £749.99 that requires your confirmation. If you do not recognise this transaction, <mark class="cue">verify your identity within 24 hours</mark> to avoid <mark class="cue">a temporary hold on your account</mark>.</p><p>NorthBank Fraud Team</p>',
+      explain: 'The real bank would write from its own domain, not a lookalike like "northbank-securecheck.com". Add the deadline pressure and the account-hold threat and this is textbook credential phishing. And notice the flawless spelling. AI-written phishing doesn\u2019t make typos.'
+    },
+    {
+      verdict: 'phish',
+      meta: 'from: ParcelPoint &lt;notify@<mark class="cue">parcelpoint-redelivery.info</mark>&gt;<br>subject: Your parcel could not be delivered',
+      body: '<p>Hello,</p><p>We attempted delivery today but no one was available. To rearrange, please pay a <mark class="cue">redelivery fee of £1.45</mark> using the link below. Unclaimed parcels are <mark class="cue">returned to sender after 48 hours</mark>.</p><p>ParcelPoint Deliveries</p>',
+      explain: 'Couriers don\u2019t charge tiny "redelivery fees" by emailed link. The small amount is the trick; it\u2019s really after your card details. The ".info" lookalike domain and the 48-hour countdown seal it.'
+    },
+    {
+      verdict: 'phish',
+      meta: 'from: Payroll &lt;hr-updates@company-payroll.net&gt;<br><mark class="cue">reply-to: payrollteam2026@gmail.com</mark><br>subject: Action needed: confirm your bank details',
+      body: '<p>Dear Employee,</p><p>As part of our payroll system migration, all staff must <mark class="cue">re-confirm their bank account details</mark> before the 28th to avoid <mark class="cue">a delay to this month\u2019s salary</mark>.</p><p>HR Payroll Team</p>',
+      explain: 'The reply-to is a personal Gmail address, a mismatch the sender hoped you wouldn\u2019t check. Real payroll never collects bank details by email reply, and threatening your salary is pure urgency pressure.'
+    },
+    {
+      verdict: 'phish',
+      meta: 'from: Cloud Storage &lt;no-reply@<mark class="cue">m365-storage-notifications.com</mark>&gt;<br>subject: Your mailbox is almost full',
+      body: '<p>Hi,</p><p>Your mailbox has reached 98% of its storage limit. <mark class="cue">Sign in to review and free up space</mark>, or incoming messages will <mark class="cue">begin bouncing within 24 hours</mark>.</p><p>The Cloud Storage Team</p>',
+      explain: 'Storage warnings come from your provider\u2019s own domain, not a hyphenated lookalike. The sign-in link is a credential harvester, and the 24-hour bounce threat is there to make you click before you think.'
+    },
+    {
+      verdict: 'phish',
+      meta: 'from: <mark class="cue">Sarah Mitchell (CEO) &lt;s.mitchell.exec@outlook.com&gt;</mark><br>subject: Quick favour',
+      body: '<p>Hi,</p><p>Are you at your desk? I\u2019m heading into back-to-back meetings and need something handled <mark class="cue">discreetly and urgently</mark>. Can you purchase <mark class="cue">four £50 gift cards</mark> for a client and send me the codes? I\u2019ll approve the expense later.</p><p>Sent from my iPhone</p>',
+      explain: 'Business email compromise: the display name says CEO but the address is a free Outlook account. Gift cards, secrecy, urgency, and "I\u2019ll approve it later". Every flag at once, and not a spelling mistake in sight.'
+    },
+    {
+      verdict: 'phish',
+      meta: 'from: Talent Team &lt;careers@<mark class="cue">brightpath-recruitment.co</mark>&gt;<br>subject: Interview invitation — Graduate Security Analyst',
+      body: '<p>Dear Youssef,</p><p>Your profile is an excellent match for a Graduate Security Analyst position paying £42,000. To proceed, please <mark class="cue">complete the attached candidate form</mark>, including your <mark class="cue">date of birth and National Insurance number</mark> for our vetting checks.</p><p>Warm regards,<br>BrightPath Talent Team</p>',
+      explain: 'Recruitment phishing aimed at job seekers. Personalised and flattering, which is what LLMs are good at. No legitimate recruiter needs your NI number or date of birth before you\u2019ve even interviewed.'
+    },
+    {
+      verdict: 'legit',
+      meta: 'from: NorthBank &lt;service@northbank.co.uk&gt;<br>subject: We\u2019ve updated our terms and conditions',
+      body: '<p>Dear Customer,</p><p>From 1 September, our terms and conditions are changing. The updated document is available in your online banking under Settings → Documents.</p><p>You don\u2019t need to do anything — this email is for your information only.</p><p>NorthBank</p>',
+      explain: 'Genuine: sent from the bank\u2019s real domain, no link to click, no deadline, and it explicitly says no action is needed. Phishing almost always wants something from you; this wants nothing.'
+    },
+    {
+      verdict: 'legit',
+      meta: 'from: Accounts &lt;no-reply@streamly.com&gt;<br>subject: Your password was changed',
+      body: '<p>Hi Youssef,</p><p>Your Streamly password was successfully changed on 3 July at 18:42.</p><p>If this was you, no further action is needed. If you didn\u2019t make this change, visit streamly.com directly and use "Forgot password" to secure your account.</p><p>Streamly Accounts</p>',
+      explain: 'Genuine security notification: it doesn\u2019t ask you to click a link to "verify" anything. It tells you to go to the site directly yourself. That advice pattern is the opposite of phishing.'
+    },
+    {
+      verdict: 'legit',
+      meta: 'from: Library Services &lt;library@university.ac.uk&gt;<br>subject: Your requested book is ready for collection',
+      body: '<p>Hi Youssef,</p><p>The title you reserved is now available at the collection desk. It will be held for you for the next seven days. No action is needed if you no longer require it.</p><p>Library Services</p>',
+      explain: 'Genuine: institutional domain, refers to something you actually did (reserving a book), asks for nothing, and the only "deadline" is a courtesy note about the hold period, with no threat attached.'
+    },
+    {
+      verdict: 'legit',
+      meta: 'from: IT Services &lt;itservices@company.co.uk&gt;<br>subject: Planned maintenance this Saturday, 02:00–06:00',
+      body: '<p>Hello all,</p><p>Email and shared drives will be unavailable this Saturday between 02:00 and 06:00 while we apply security updates. No action is required, and no data will be affected.</p><p>If you have questions, contact the service desk on the usual number.</p><p>IT Services</p>',
+      explain: 'Genuine: no links, no credentials requested, directs questions to a known internal channel, and asks nothing of you. Attackers rarely send emails that offer no way to catch you.'
+    },
+    {
+      verdict: 'legit',
+      meta: 'from: ParcelPoint &lt;tracking@parcelpoint.co.uk&gt;<br>subject: Your parcel arrives tomorrow',
+      body: '<p>Hi Youssef,</p><p>Your parcel from Order #58291 is out for delivery tomorrow between 10:00 and 14:00. You can track it any time by entering your tracking number PP-58291-UK on our website.</p><p>No signature is required.</p><p>ParcelPoint</p>',
+      explain: 'Genuine: real domain, no payment request, and instead of a link it gives you a tracking number to enter on the site yourself. And it references a specific order, not a vague "a parcel".'
+    },
+    {
+      verdict: 'legit',
+      meta: 'from: Streamly &lt;billing@streamly.com&gt;<br>subject: Your payment receipt — July',
+      body: '<p>Hi Youssef,</p><p>Thanks for your payment of £8.99 for your Streamly subscription. This is a receipt for your records — no action is needed.</p><p>You can manage your subscription any time from your account settings.</p><p>Streamly Billing</p>',
+      explain: 'Genuine receipt: correct domain, matches a subscription you\u2019d recognise, and asks nothing. Fake "receipts" exist, but they always add a hook: "dispute this charge", "verify your card". This has no hook.'
+    }
+  ];
+
+  // ---- game state -----------------------------------------------------------
+  const ROUNDS = 10;
+  let deck = [], round = 0, score = 0;
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function startGame() {
+    deck = shuffle([...EMAILS]).slice(0, ROUNDS);
+    round = 0; score = 0;
+    document.getElementById('endscreen').classList.remove('show');
+    document.getElementById('game').style.display = 'block';
+    renderRound();
+  }
+
+  function renderRound() {
+    const e = deck[round];
+    document.getElementById('round-num').textContent = round + 1;
+    document.getElementById('score-num').textContent = score;
+    document.getElementById('progress-fill').style.width = (round / ROUNDS * 100) + '%';
+    const pane = document.getElementById('email-pane');
+    pane.classList.remove('revealed');
+    document.getElementById('email-meta').innerHTML = e.meta;
+    document.getElementById('email-body').innerHTML = e.body;
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('choose-phish').disabled = false;
+    document.getElementById('choose-legit').disabled = false;
+  }
+
+  function guess(choice) {
+    const e = deck[round];
+    const correct = choice === e.verdict;
+    if (correct) score++;
+    document.getElementById('choose-phish').disabled = true;
+    document.getElementById('choose-legit').disabled = true;
+    document.getElementById('email-pane').classList.add('revealed');
+    document.getElementById('score-num').textContent = score;
+
+    const isPhish = e.verdict === 'phish';
+    const color = isPhish ? 'var(--flag)' : 'var(--safe)';
+    const label = isPhish ? 'PHISHING' : 'LEGITIMATE';
+    document.getElementById('result-line').innerHTML =
+      '<span class="dot" style="background:' + color + '"></span>' +
+      '<span style="color:' + color + '">verdict: ' + label + '</span>' +
+      '<span style="color:var(--ink-soft)">· you were ' + (correct ? 'right ✓' : 'wrong ✗') + '</span>';
+    document.getElementById('result-explain').textContent = e.explain;
+    document.getElementById('next-btn').textContent = (round === ROUNDS - 1) ? 'See your score →' : 'Next email →';
+    document.getElementById('result').classList.add('show');
+    document.getElementById('next-btn').focus();
+  }
+
+  function nextRound() {
+    round++;
+    if (round >= ROUNDS) return endGame();
+    renderRound();
+  }
+
+  function rankFor(s) {
+    if (s === 10) return ['Human firewall', 'Perfect score. Nothing got past you. The classifier would be proud.'];
+    if (s >= 8)  return ['Analyst material', 'Sharp eye. You read sender domains and pressure tactics the way a SOC analyst does.'];
+    if (s >= 6)  return ['Cautiously clicking', 'Better than most. I\u2019d bet the ones that got you were the polite, well-written ones. That\u2019s the whole problem with AI phishing.'];
+    if (s >= 4)  return ['Phish food', 'The attackers would like a word. Start with the sender\u2019s domain next time. It\u2019s the one thing they can\u2019t fake properly.'];
+    return ['Change your passwords', 'Rough round. Then again, you just had ten scams explained to you in detail, which is more training than most people ever get.'];
+  }
+
+  function endGame() {
+    document.getElementById('game').style.display = 'none';
+    document.getElementById('progress-fill').style.width = '100%';
+    const [rank, summary] = rankFor(score);
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('final-rank').textContent = 'rank: ' + rank + ' · accuracy ' + (score / ROUNDS).toFixed(2);
+    document.getElementById('final-summary').textContent = summary;
+    document.getElementById('endscreen').classList.add('show');
+  }
+
+  function shareScore() {
+    const text = 'I scored ' + score + '/10 on Spot the Phish — can you beat me? https://yshehata221.github.io/phish-game.html';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        document.getElementById('share-btn').textContent = 'Copied ✓';
+        setTimeout(() => document.getElementById('share-btn').textContent = 'Copy score to share', 2000);
+      }).catch(() => fallbackShare(text));
+    } else {
+      fallbackShare(text);
+    }
+  }
+  function fallbackShare(text) { window.prompt('Copy your score:', text); }
+
+  function restart() { startGame(); window.scrollTo({ top: 0 }); }
+
+  startGame();
+</script>
+
+</body>
+</html>
